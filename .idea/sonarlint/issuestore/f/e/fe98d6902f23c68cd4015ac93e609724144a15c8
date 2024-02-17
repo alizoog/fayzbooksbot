@@ -1,0 +1,16 @@
+
+^
+java:S1192,"HDefine a constant instead of duplicating this literal "correct" 3 times.(ÇØøó
+b
+java:S1192."LDefine a constant instead of duplicating this literal "question_id" 3 times.(ªè¾‹
+q
+java:S2095&"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(úÚƒúÿÿÿÿ8¥õÛ1
+l
+java:S2095<"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(„Å¸8¥õÛ1
+l
+java:S2095"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(•ÀÒÜ8¥õÛ1
+l
+java:S2095d"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(‡Ìµ8¥õÛ1
+l
+java:S2095P"OUse try-with-resources or close this "PreparedStatement" in a "finally" clause.(¼¯ä·8¥õÛ1
+W	java:S125"<This block of commented-out lines of code should be removed.(ºÙ¹a8–¥õÛ1

@@ -1,0 +1,19 @@
+
+o
+java:S1192|"MDefine a constant instead of duplicating this literal "Test Ishlash" 7 times.(Ğîíşÿÿÿÿ8™ÕÛ1
+n
+java:S1192†"QDefine a constant instead of duplicating this literal "Testni yakunlash" 3 times.(ÃÜâW8šÕÛ1
+p
+java:S1192v"NDefine a constant instead of duplicating this literal "Hikoya yozish" 7 times.(é¾µ×ùÿÿÿÿ8›ÕÛ1
+u
+java:S3776 "SRefactor this method to reduce its Cognitive Complexity from 140 to the 15 allowed.(‘ï‹şÿÿÿÿ8õÄŒÌÖ1
+J	java:S108O")Either remove or fill this block of code.(Ä•ŸÆûÿÿÿÿ8ä ÕÛ1
+^	java:S125×"<This block of commented-out lines of code should be removed.(ÏÓÂÊşÿÿÿÿ8Û¡ÕÛ1
+R
+java:S2864ê"4Iterate over the "entrySet" instead of the "keySet".(¿³…ª8±­‡Û1
+R
+java:S2864ƒ"4Iterate over the "entrySet" instead of the "keySet".(¿³…ª8½­‡Û1
+h
+java:S1874¼"JDon't override a deprecated method or explicitly mark it as "@Deprecated".(®É–Ø8™¢ÕÛ1
+é
+java:S6541 "ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 226 to 64, Complexity from 64 to 14, Nesting Level from 5 to 2, Number of Variables from 46 to 6.(‘ï‹şÿÿÿÿ8‰ÅŒÌÖ1
