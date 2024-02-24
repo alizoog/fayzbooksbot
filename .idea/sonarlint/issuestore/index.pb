@@ -150,3 +150,5 @@ Q.idea/sonarlint/securityhotspotstore/2/8/284a5e7792f8d4f8eec43c4b079d6916f1dea5
 Q.idea/sonarlint/securityhotspotstore/0/9/09670e28556b045b3c9c86ded2d01aee3a9bc168,2\c\2c630e6e0d9122da737f0e078e3837a721fb0545
 Å
 Q.idea/sonarlint/securityhotspotstore/0/1/010d0e5d3b44d1251f8e41b94e086249ccb426b3,e\2\e2e8cd8bf6bbbd4a41f50b00260c94735b0f7cf5
+O
+src/main/java/uz/fayz/Main.java,f\6\f6d52769a14614c5540beba400677b0eb217474d

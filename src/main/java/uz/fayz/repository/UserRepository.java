@@ -12,19 +12,19 @@ public class UserRepository extends BaseDatabase {
     private final MyMapper mapper = new MyMapper();
 
     public boolean existUserByChatId(String chatId) {
-        String id = null;
+        int id = -1;
         try (Connection connection = connection()) {
-            PreparedStatement ps = connection.prepareStatement("SELECT chat_id FROM users WHERE chat_id = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT id FROM users WHERE chat_id = ?");
             ps.setString(1,chatId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
 
-            id = rs.getString("id");
+            id = rs.getInt("id");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return id != null;
+        return id != -1;
     }
 
     public User getUserByChatId(String chatId) {

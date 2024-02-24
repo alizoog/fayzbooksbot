@@ -90,12 +90,14 @@ public class BookService {
     }
 
     public Map<String, List<Answer>> getQuestionAndAnswer(String chatId, int bookId, int n) {
-        Question question = questionRepository.getQuestion(chatId, bookId);
-        List<Answer> answers = questionRepository.getAnswers(question.getId());
+        List<Question> questions = questionRepository.getQuestion(chatId, bookId);
+        if (questions.isEmpty()) return new HashMap<>();
+        Collections.shuffle(questions);
+        List<Answer> answers = questionRepository.getAnswers(questions.get(0).getId());
         Double colPrice = historyRepository.colPrice(chatId, bookId);
         Collections.shuffle(answers);
         String answerAsString = getAnswerAsString(answers);
-        String questionAsString = getQuestionAsString(question, n,colPrice);
+        String questionAsString = getQuestionAsString(questions.get(0), n,colPrice);
         Map<String, List<Answer>> map = new HashMap<>();
         map.put(questionAsString + answerAsString, answers);
         return map;
@@ -146,5 +148,19 @@ public class BookService {
 
     public Double getBalance(int bookId, String chatId) {
         return historyRepository.colPrice(chatId,bookId);
+    }
+
+    public void setQuestionHistory(String chatId, int bookId) {
+        int questionHistoryId = bookRepository.getQuestionHistoryId(chatId, bookId);
+        int numberOfQuestion = historyRepository.getCountOfQuestion(questionHistoryId);
+        int countOfCorrectAnswer = historyRepository.getCountOfCorrectAnswer(questionHistoryId);
+        int numberOfAllQuestion = Math.min(historyRepository.getCountOfAllQuestion(bookId), 10);
+        QuestionHistory questionHistory = QuestionHistory.builder()
+                .id(questionHistoryId)
+                .countOfAllQuestion(numberOfAllQuestion)
+                .countOfCorrectAnswer(countOfCorrectAnswer)
+                .numberOfQuestion(numberOfQuestion)
+                .build();
+        historyRepository.updateQuestionHistory(questionHistory);
     }
 }

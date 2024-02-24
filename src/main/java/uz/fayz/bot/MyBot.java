@@ -1,6 +1,7 @@
 package uz.fayz.bot;
 
 import lombok.SneakyThrows;
+import uz.fayz.model.*;
 import uz.fayz.service.BookService;
 import uz.fayz.service.RegionService;
 import uz.fayz.service.UserService;
@@ -14,13 +15,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import uz.fayz.enums.StepEnum;
-import uz.fayz.model.*;
-import uz.fayz.util.BotConstants;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static uz.fayz.enums.StepEnum.*;
+import static uz.fayz.util.BotConstants.TOKEN;
+import static uz.fayz.util.BotConstants.USERNAME;
 
 public class MyBot extends TelegramLongPollingBot {
     private final RegionService regionService = new RegionService();
@@ -47,31 +49,31 @@ public class MyBot extends TelegramLongPollingBot {
                         newUser = new User();
                         sendTextMessage(chatId, "Ism familiyangizni kiriting");
                         newUser.setChatId(chatId);
-                        userService.save(newUser, StepEnum.FIRST_NAME);
+                        userService.save(newUser, FIRST_NAME);
                         return;
-                    } else if (Objects.equals(newUser.getStep(), StepEnum.FIRST_NAME)
-                               || Objects.equals(newUser.getStep(), StepEnum.LAST_NAME) || Objects.equals(newUser.getStep(), StepEnum.AGE) ||
-                               Objects.equals(newUser.getStep(), StepEnum.SHARE_CONTACT) || Objects.equals(newUser.getStep(), StepEnum.STUDY_CENTER) ||
-                               Objects.equals(newUser.getStep(), StepEnum.TEACHER_NAME) || Objects.equals(newUser.getStep(), StepEnum.CLASS)) {
+                    } else if (Objects.equals(newUser.getStep(), FIRST_NAME)
+                               || Objects.equals(newUser.getStep(), LAST_NAME) || Objects.equals(newUser.getStep(), AGE) ||
+                               Objects.equals(newUser.getStep(), SHARE_CONTACT) || Objects.equals(newUser.getStep(), STUDY_CENTER) ||
+                               Objects.equals(newUser.getStep(), TEACHER_NAME) || Objects.equals(newUser.getStep(), CLASS)) {
                         sendTextMessage(chatId, "Ism familiyangizni kiriting");
-                        userService.editUser(newUser, StepEnum.FIRST_NAME);
+                        userService.editUser(newUser, FIRST_NAME);
                         return;
                     }
 
-                    newUser.setStep(StepEnum.REGISTERED);
-                    userService.editUser(newUser, StepEnum.REGISTERED);
+                    newUser.setStep(REGISTERED);
+                    userService.editUser(newUser, REGISTERED);
                 }
-                if (Objects.equals(newUser.getStep(), StepEnum.FIRST_NAME)) {
+                if (Objects.equals(newUser.getStep(), FIRST_NAME)) {
                     newUser.setFullName(text);
                     List<Region> regions = regionService.getRegions();
                     sendReplyRequest(chatId, "Viloyatingizni tanlang:", myKeyboardMarkup.createInlineKeyboardMarkupForRegion(regions));
                     return;
                 }
-                if (newUser.getStep().equals(StepEnum.LAST_NAME)) {
+                if (newUser.getStep().equals(LAST_NAME)) {
                     sendReplyRequest(chatId, "Raqamingizni yuboring", myKeyboardMarkup.shareContact());
-                    userService.editUser(newUser, StepEnum.SHARE_CONTACT);
+                    userService.editUser(newUser, SHARE_CONTACT);
                 }
-                if (newUser.getStep().equals(StepEnum.AGE)) {
+                if (newUser.getStep().equals(AGE)) {
                     int age = -1;
                     try {
                         age = Integer.valueOf(text);
@@ -85,19 +87,19 @@ public class MyBot extends TelegramLongPollingBot {
                     }
                     newUser.setAge(age);
                     if (age < 7 || age > 17) {
-                        newUser.setStep(StepEnum.REGISTERED);
-                        userService.editUser(newUser, StepEnum.REGISTERED);
+                        newUser.setStep(REGISTERED);
+                        userService.editUser(newUser, REGISTERED);
                     } else {
                         sendTextMessage(chatId, "Maktabingizni kiriting");
-                        userService.editUser(newUser, StepEnum.STUDY_CENTER);
+                        userService.editUser(newUser, STUDY_CENTER);
                     }
                 }
-                if (newUser.getStep().equals(StepEnum.STUDY_CENTER)) {
+                if (newUser.getStep().equals(STUDY_CENTER)) {
                     newUser.setSchool(text);
                     sendTextMessage(chatId, "Nechanchi Sinfda Uqiysiz");
-                    userService.editUser(newUser, StepEnum.CLASS);
+                    userService.editUser(newUser, CLASS);
                 }
-                if (newUser.getStep().equals(StepEnum.CLASS)) {
+                if (newUser.getStep().equals(CLASS)) {
                     try {
                         int classNumber = Integer.parseInt(text);
                         newUser.setClassNumber(classNumber);
@@ -107,49 +109,49 @@ public class MyBot extends TelegramLongPollingBot {
                         return;
                     }
                     sendTextMessage(chatId, "Uqituvchingizning Ism Familiyasi");
-                    userService.editUser(newUser, StepEnum.TEACHER_NAME);
+                    userService.editUser(newUser, TEACHER_NAME);
                 }
-                if (newUser.getStep().equals(StepEnum.TEACHER_NAME)) {
+                if (newUser.getStep().equals(TEACHER_NAME)) {
                     newUser.setTeacherName(text);
-                    newUser.setStep(StepEnum.REGISTERED);
-                    userService.editUser(newUser, StepEnum.REGISTERED);
+                    newUser.setStep(REGISTERED);
+                    userService.editUser(newUser, REGISTERED);
                     sendTextMessage(chatId, "muvaffaqiyatli ro'yxatdan o'tdingiz! ");
                 }
-                if ((Objects.equals(newUser.getStep(), StepEnum.REGISTERED) || Objects.equals(newUser.getStep(), StepEnum.SELECTED_TEST)) && text.equals("Hikoya yozish")) {
+                if ((Objects.equals(newUser.getStep(), REGISTERED) || Objects.equals(newUser.getStep(), SELECTED_TEST)) && text.equals("Hikoya yozish")) {
                     List<Book> books = bookService.getBooks(0);
                     sendReplyRequest(chatId, bookService.getBooksAsString(books), myKeyboardMarkup.createInlineKeyboardMarkup(books, 0));
-                    userService.editUser(newUser, StepEnum.SELECTED_STORY);
+                    userService.editUser(newUser, SELECTED_STORY);
                     return;
                 }
-                if ((Objects.equals(newUser.getStep(), StepEnum.REGISTERED) || Objects.equals(newUser.getStep(), StepEnum.SELECTED_STORY)) && text.equals("Test Ishlash")) {
+                if ((Objects.equals(newUser.getStep(), REGISTERED) || Objects.equals(newUser.getStep(), SELECTED_STORY)) && text.equals("Test Ishlash")) {
                     List<Book> books = bookService.getBooks(0);
                     sendReplyRequest(chatId, bookService.getBooksAsString(books), myKeyboardMarkup.createInlineKeyboardMarkup(books, 0));
-                    userService.editUser(newUser, StepEnum.SELECTED_TEST);
+                    userService.editUser(newUser, SELECTED_TEST);
 
                 }
-                if ((Objects.equals(newUser.getStep(), StepEnum.HIKOYA_TANLOVI)) && text.equals("Menu")) {
+                if ((Objects.equals(newUser.getStep(), HIKOYA_TANLOVI)) && text.equals("Menu")) {
                     sendReplyRequest(chatId, "Kategoriya tanlang", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
-                    userService.editUser(newUser, StepEnum.REGISTERED);
+                    userService.editUser(newUser, REGISTERED);
 
-                } else if ((Objects.equals(newUser.getStep(), StepEnum.TEST_ISHLAMOQDA) || Objects.equals(newUser.getStep(), StepEnum.SELECTED_TEST)) && Objects.equals(text, "Testni yakunlash")) {
-                    sendReplyRequest(chatId, "Test yakunlandi Ishtirokingiz uchun rahmat", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
+                } else if ((Objects.equals(newUser.getStep(), TEST_ISHLAMOQDA) || Objects.equals(newUser.getStep(), SELECTED_TEST)) && Objects.equals(text, "Testni yakunlash")) {
+                    sendReplyRequest(chatId, "Test bekor qilindi Ishtirokingiz uchun rahmat", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
                     newUser.setTestNumber(0);
-                    userService.editUser(newUser, StepEnum.REGISTERED);
-                } else if (Objects.equals(newUser.getStep(), StepEnum.HIKOYA_TANLOVI)) {
+                    userService.editUser(newUser, REGISTERED);
+                } else if (Objects.equals(newUser.getStep(), HIKOYA_TANLOVI)) {
                     bookService.storyChange(chatId, text);
                     sendReplyRequest(chatId, "Hikoyangiz qabul qilindi", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
-                    userService.editUser(newUser, StepEnum.REGISTERED);
+                    userService.editUser(newUser, REGISTERED);
                 }
-                if (Objects.equals(newUser.getStep(), StepEnum.REGISTERED)) {
+                if (Objects.equals(newUser.getStep(), REGISTERED)) {
                     bookService.storyChange(chatId, text);
                     sendReplyRequest(chatId, "Kategoriyalardan birini tanlang!", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
                 }
 
-            } else if (newUser.getStep().equals(StepEnum.SHARE_CONTACT)) {
+            } else if (newUser.getStep().equals(SHARE_CONTACT)) {
                 if (message.hasText()) newUser.setPhoneNumber(message.getText());
                 else newUser.setPhoneNumber(contact.getPhoneNumber());
                 sendReplyRequest(chatId, "Yoshingizni kiriting", null);
-                userService.editUser(newUser, StepEnum.AGE);
+                userService.editUser(newUser, AGE);
             }
         } else if (update.hasCallbackQuery()) {
             String data = update.getCallbackQuery().getData();
@@ -177,7 +179,7 @@ public class MyBot extends TelegramLongPollingBot {
             } else if (data.startsWith("address")) {
                 int addressId = Integer.parseInt(data.substring(7));
                 user.setAddressId(addressId);
-                userService.editUser(user, StepEnum.SHARE_CONTACT);
+                userService.editUser(user, SHARE_CONTACT);
                 deleteMessage(update, chatId);
                 sendReplyRequest(chatId, "Raqamingizni yuboring", myKeyboardMarkup.shareContact());
             } else if (data.startsWith("prevs")) {
@@ -200,10 +202,10 @@ public class MyBot extends TelegramLongPollingBot {
             } else if (data.startsWith("back")) {
                 List<Book> books = bookService.getBooks(0);
                 editReplyRequest(chatId, bookService.getBooksAsString(books), messageId, myKeyboardMarkup.createInlineKeyboardMarkup(books, 0));
-                userService.editUser(user, StepEnum.SELECTED_STORY);
+                userService.editUser(user, SELECTED_STORY);
             } else if (data.startsWith("book")) {
                 int bookId = Integer.parseInt(data.substring(4));
-                if (Objects.equals(StepEnum.SELECTED_STORY, user.getStep())) {
+                if (Objects.equals(SELECTED_STORY, user.getStep())) {
                     if (bookService.existStory(chatId, bookId)) {
                         sendTextMessage(chatId, "Bu kitobga hikoya yozgansiz");
                         return;
@@ -217,7 +219,7 @@ public class MyBot extends TelegramLongPollingBot {
                         return;
                     }
                     editReplyRequest(chatId, bookSectionAsString, messageId, myKeyboardMarkup.createInlineKeyboardMarkupForSection(bookId, bookSectionList, 0));
-                } else if (Objects.equals(StepEnum.SELECTED_TEST, user.getStep())) {
+                } else if (Objects.equals(SELECTED_TEST, user.getStep())) {
                     if (bookService.isSloved(chatId, bookId)) {
                         sendReplyRequest(chatId, "Bu kitobga test Ishlagansiz", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Testni yakunlash")));
                         return;
@@ -227,7 +229,7 @@ public class MyBot extends TelegramLongPollingBot {
                     Map<String, List<Answer>> questionMap = bookService.getQuestionAndAnswer(chatId, bookId, user.getTestNumber() + 1);
                     if (questionMap.isEmpty()) {
                         sendTextMessage(chatId, "Test yuq");
-                        userService.editUser(user, StepEnum.REGISTERED);
+                        userService.editUser(user, REGISTERED);
                     }
                     deleteMessage(update, chatId);
                     sendReplyRequest(chatId, "Test boshlandi, Omad!!!", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Testni yakunlash")));
@@ -235,7 +237,7 @@ public class MyBot extends TelegramLongPollingBot {
                         sendReplyRequest(chatId, question, myKeyboardMarkup.createInlineKeyboardMarkupForAnswer(questionMap.get(question)));
                     }
                     user.setTestNumber(1);
-                    userService.editUser(user, StepEnum.TEST_ISHLAMOQDA);
+                    userService.editUser(user, TEST_ISHLAMOQDA);
 
                 }
             } else if (data.startsWith("answer")) {
@@ -245,29 +247,31 @@ public class MyBot extends TelegramLongPollingBot {
                 if (user.getTestNumber() == 10) {
                     deleteMessage(update, chatId);
                     Double balance = bookService.getBalance(bookId, chatId);
+                    bookService.setQuestionHistory(chatId,bookId);
                     sendReplyRequest(chatId, "Test yakunlandi Ishtirokingiz uchun rahmat, Balance : " + balance, myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
                     user.setTestNumber(0);
-                    userService.editUser(user, StepEnum.REGISTERED);
+                    userService.editUser(user, REGISTERED);
                 } else {
                     Map<String, List<Answer>> questionMap = bookService.getQuestionAndAnswer(chatId, bookId, user.getTestNumber() + 1);
                     if (questionMap.isEmpty()) {
                         Double balance = bookService.getBalance(bookId, chatId);
+                        bookService.setQuestionHistory(chatId,bookId);
                         sendReplyRequest(chatId, "Test yakunlandi Ishtirokingiz uchun rahmat, Balance : " + balance, myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Hikoya yozish", "Test Ishlash")));
                         user.setTestNumber(0);
-                        userService.editUser(user, StepEnum.REGISTERED);
+                        userService.editUser(user, REGISTERED);
                     }
                     for (String question : questionMap.keySet()) {
                         editReplyRequest(chatId, question, messageId, myKeyboardMarkup.createInlineKeyboardMarkupForAnswer(questionMap.get(question)));
                     }
                     user.setTestNumber(user.getTestNumber() + 1);
-                    userService.editUser(user, StepEnum.TEST_ISHLAMOQDA);
+                    userService.editUser(user, TEST_ISHLAMOQDA);
                 }
             } else if (data.startsWith("section")) {
                 int sectionId = Integer.parseInt(data.substring(7));
                 Section section = bookService.getSectionBySectionId(sectionId);
                 sendReplyRequest(chatId, section.getName() + " Bo'limiga hikoya yozing", myKeyboardMarkup.createReplyKeyboardMarkup(List.of("Menu")));
                 deleteMessage(update, chatId);
-                userService.userChangeStatus(chatId, StepEnum.HIKOYA_TANLOVI);
+                userService.userChangeStatus(chatId, HIKOYA_TANLOVI);
                 bookService.selectSection(chatId, sectionId);
             }
         }
@@ -309,11 +313,11 @@ public class MyBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConstants.USERNAME;
+        return USERNAME;
     }
 
     @Override
     public String getBotToken() {
-        return BotConstants.TOKEN;
+        return TOKEN;
     }
 }

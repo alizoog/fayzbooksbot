@@ -10,26 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionRepository extends BaseDatabase{
-    public Question getQuestion(String chatId, int bookId) {
-        Question question = null;
+    public List<Question> getQuestion(String chatId, int bookId) {
+        List<Question> questions = new ArrayList<>();
         try (Connection connection = connection()) {
-            PreparedStatement ps = connection.prepareStatement("select q.* from question q where q.id not in (select h.question_id from history_item h where h.user_id  = ?) and q.book_id = ? limit 1");
+            PreparedStatement ps = connection.prepareStatement("select q.* from question q where q.id not in (select h.question_id from history_item h where h.user_id  = ?) and q.book_id = ? ");
             ps.setString(1,chatId);
             ps.setInt(2,bookId);
-//            ps.setInt(3,testNum);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                question = Question.builder()
+            while (rs.next()) {
+               Question question = Question.builder()
                         .id(rs.getInt("id"))
                         .bookId(rs.getInt("book_id"))
                         .name(rs.getString("name"))
                         .price(rs.getDouble("price"))
                         .build();
+                questions.add(question);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return question;
+        return questions;
     }
 
     public List<Answer> getAnswers(int questionId) {

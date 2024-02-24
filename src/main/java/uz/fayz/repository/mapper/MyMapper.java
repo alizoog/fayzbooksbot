@@ -9,7 +9,6 @@ import java.sql.SQLException;
 public class MyMapper {
     public User userMapper(ResultSet rs) throws SQLException {
         return User.builder()
-//                .id(rs.getInt("id"))
                 .age(rs.getInt("age"))
                 .step(StepEnum.valueOf(rs.getString("step_enum")))
                 .chatId(rs.getString("chat_id"))

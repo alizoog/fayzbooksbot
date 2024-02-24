@@ -11,8 +11,6 @@ import uz.fayz.enums.StepEnum;
 @ToString
 public class User {
 
-//    private Integer id;
-
     private String chatId;
 
     private String fullName;

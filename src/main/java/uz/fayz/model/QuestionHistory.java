@@ -16,7 +16,8 @@ public class QuestionHistory {
     private String userId;
     private Integer bookId;
     private String bookName;
+    private Integer countOfAllQuestion;
     private Integer numberOfQuestion;
-    private Integer correctAnswer;
+    private Integer countOfCorrectAnswer;
 
 }
